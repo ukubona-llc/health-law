@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uganda Compressor Stack — Employer Duties</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --border: #1e1e2e;
+    --accent-gold: #c9a84c;
+    --accent-red: #c94c4c;
+    --accent-green: #4cc98a;
+    --accent-blue: #4c8ac9;
+    --accent-purple: #8a4cc9;
+    --text: #e8e4d8;
+    --muted: #6b6870;
+    --dim: #3a3848;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  header {
+    padding: 48px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent-gold);
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* CASE BRIEF */
+  .case-brief {
+    margin: 40px 0 32px;
+    background: var(--surface);
+    border: 1px solid var(--dim);
+    border-left: 3px solid var(--accent-gold);
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  .brief-item label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .brief-item p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .brief-item .status {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+  .status.red { background: rgba(201,76,76,0.15); color: var(--accent-red); border: 1px solid rgba(201,76,76,0.3); }
+  .status.amber { background: rgba(201,168,76,0.15); color: var(--accent-gold); border: 1px solid rgba(201,168,76,0.3); }
+  .status.green { background: rgba(76,201,138,0.15); color: var(--accent-green); border: 1px solid rgba(76,201,138,0.3); }
+
+  /* STACK LAYERS */
+  .stack-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
+
+  .layer {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    margin-bottom: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .layer:hover { border-color: var(--dim); }
+  .layer.active { border-color: var(--layer-color, var(--accent-gold)); }
+
+  .layer-header {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+  }
+
+  .layer-index {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .layer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+  }
+
+  .layer-verdict {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .verdict-fail { background: rgba(201,76,76,0.12); color: var(--accent-red); border: 1px solid rgba(201,76,76,0.25); }
+  .verdict-partial { background: rgba(201,168,76,0.12); color: var(--accent-gold); border: 1px solid rgba(201,168,76,0.25); }
+  .verdict-intent { background: rgba(76,138,201,0.12); color: var(--accent-blue); border: 1px solid rgba(76,138,201,0.25); }
+  .verdict-ok { background: rgba(76,201,138,0.12); color: var(--accent-green); border: 1px solid rgba(76,201,138,0.25); }
+
+  .layer-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .layer.active .layer-body {
+    max-height: 700px;
+  }
+
+  .layer-content {
+    padding: 0 24px 24px 88px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .duty-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .duty-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--dim);
+    padding: 14px 16px;
+  }
+
+  .duty-box h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .duty-box h4.has { color: var(--accent-green); }
+  .duty-box h4.has-not { color: var(--accent-red); }
+  .duty-box h4.should { color: var(--accent-blue); }
+
+  .duty-box ul { list-style: none; }
+  .duty-box ul li {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+    padding-left: 12px;
+    position: relative;
+    opacity: 0.85;
+  }
+  .duty-box ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  .layer-insight {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(201,168,76,0.05);
+    border-left: 2px solid var(--accent-gold);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* CONNECTOR */
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    position: relative;
+  }
+  .connector::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--dim);
+  }
+  .connector-label {
+    background: var(--bg);
+    padding: 0 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--dim);
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.1em;
+  }
+
+  /* OMEGA METER */
+  .omega-section {
+    margin-top: 48px;
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--dim);
+  }
+
+  .omega-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .omega-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 24px;
+  }
+
+  .omega-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .omega-bar-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 60px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .omega-bar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .omega-bar-track {
+    height: 8px;
+    background: var(--dim);
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .omega-bar-fill {
+    height: 100%;
+    border-radius: 0;
+    transition: width 1s ease;
+    width: 0;
+  }
+
+  .omega-bar-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-align: right;
+  }
+
+  /* SUMMARY THEOREM */
+  .theorem {
+    margin-top: 40px;
+    padding: 32px;
+    border: 1px solid var(--dim);
+    position: relative;
+    background: linear-gradient(135deg, rgba(201,168,76,0.03) 0%, transparent 60%);
+  }
+
+  .theorem-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .theorem blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(15px, 2.5vw, 20px);
+    line-height: 1.65;
+    font-style: italic;
+    color: var(--text);
+    border: none;
+  }
+
+  .theorem blockquote strong {
+    font-style: normal;
+    color: var(--accent-gold);
+  }
+
+  /* FORMULA */
+  .formula-box {
+    margin-top: 20px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--dim);
+    padding: 20px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-green);
+    line-height: 2;
+  }
+
+  /* PRACTICAL STEPS */
+  .practical {
+    margin-top: 40px;
+  }
+
+  .practical-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+  }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    color: var(--dim);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .step-card h4 {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--accent-gold);
+  }
+
+  .step-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .case-brief { grid-template-columns: 1fr; }
+    .duty-grid { grid-template-columns: 1fr; }
+    .layer-content { padding-left: 24px; }
+    header { padding: 32px 20px 20px; }
+    .container { padding: 0 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div class="header-tag">Uganda · Employment Law · Health Compressor Stack · 2026</div>
+    <h1>Employer Duties to a<br><em>Sovereign-Person</em> with No Safety Net</h1>
+    <div class="subtitle">Person → Kin → Eco-System → Federated → Civilizational</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- CASE BRIEF -->
+  <div class="case-brief">
+    <div class="brief-item">
+      <label>The Person</label>
+      <p>29-year-old female employee. Scheduled for core needle aspirate (diagnostic biopsy). Sole breadwinner.</p>
+      <span class="status red">Kin-Layer = 0</span>
+    </div>
+    <div class="brief-item">
+      <label>The Gap</label>
+      <p>Orphan. No kin network. No medical insurance. Potentially has dependants (children, spouse).</p>
+      <span class="status amber">High Vulnerability</span>
+    </div>
+    <div class="brief-item">
+      <label>The Legal Reality</label>
+      <p>Employer owes her <em>time</em> and <em>job security</em> — not procedure cost. She falls through the system.</p>
+      <span class="status red">Compression Failure</span>
+    </div>
+  </div>
+
+  <p class="stack-title">↓ Compressor Stack — click each layer to expand</p>
+
+  <!-- LAYER 1: PERSON -->
+  <div class="layer" id="l1" style="--layer-color: #c94c4c;" onclick="toggle('l1')">
+    <div class="layer-header">
+      <div class="layer-index">01</div>
+      <div class="layer-name" style="color:#c94c4c;">[Sovereign] Person</div>
+      <div class="layer-verdict verdict-fail">BIOLOGICAL SHOCK</div>
+    </div>
+    <div class="layer-body">
+      <div class="layer-content">
+        <div class="duty-grid">
+          <div class="duty-box">
+            <h4 class="has">Her Entitlements</h4>
+            <ul>
+              <li>Right to seek medical care</li>
+              <li>Right to sick leave (if ≥1 month service)</li>
+              <li>Protection from dismissal while ill</li>
+              <li>Medical certificate costs reimbursed by employer</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has-not">Her Exposure</h4>
+            <ul>
+              <li>Core needle aspirate cost: out-of-pocket</li>
+              <li>Diagnostic delay risk if cash insufficient</li>
+              <li>No kin buffer to absorb cost shock</li>
+              <li>Dependants increase pressure on single income</li>
+            </ul>
+          </div>
+        </div>
+        <div class="layer-insight">
+          A high-dimensional biological crisis (uncertain malignancy) collapses immediately into a single financial scalar: "Can I afford the biopsy?" This is the compression error at its most acute.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="connector-label">PROPAGATES ↓</span></div>
+
+  <!-- LAYER 2: KIN -->
+  <div class="layer" id="l2" style="--layer-color: #c97a4c;" onclick="toggle('l2')">
+    <div class="layer-header">
+      <div class="layer-index">02</div>
+      <div class="layer-name" style="color:#c97a4c;">[Kin] Social Network</div>
+      <div class="layer-verdict verdict-fail">K ≈ 0 (ORPHAN)</div>
+    </div>
+    <div class="layer-body">
+      <div class="layer-content">
+        <div class="duty-grid">
+          <div class="duty-box">
+            <h4 class="has">What Should Exist</h4>
+            <ul>
+              <li>Family emergency transfers</li>
+              <li>Church / SACCO / savings group</li>
+              <li>Community micro-insurance pools</li>
+              <li>Informal loan networks (clan/village)</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has-not">What Exists for Her</h4>
+            <ul>
+              <li>Kin buffer: absent (orphan status)</li>
+              <li>Urban social density: fragile</li>
+              <li>Her dependants are cost multipliers, not buffers</li>
+              <li>SACCO access requires prior membership</li>
+            </ul>
+          </div>
+        </div>
+        <div class="layer-insight">
+          Uganda's clan and extended family system is the strongest informal insurance in the country. When this layer is absent (orphan + urban migrant), every health shock falls directly to the next layer with no attenuation.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="connector-label">PROPAGATES ↓</span></div>
+
+  <!-- LAYER 3: ECO-SYSTEM (EMPLOYER) -->
+  <div class="layer" id="l3" style="--layer-color: #c9a84c;" onclick="toggle('l3')">
+    <div class="layer-header">
+      <div class="layer-index">03</div>
+      <div class="layer-name" style="color:#c9a84c;">[Eco-System] Employer</div>
+      <div class="layer-verdict verdict-partial">PARTIAL DUTY</div>
+    </div>
+    <div class="layer-body">
+      <div class="layer-content">
+        <div class="duty-grid">
+          <div class="duty-box">
+            <h4 class="has">Legally Required (Employment Act 2006 + 2023 Amendments)</h4>
+            <ul>
+              <li>100% salary: first month of illness</li>
+              <li>Job protection: up to 6 months (post-2023 extension from 2 months)</li>
+              <li>Medical certificate costs + transport: employer pays</li>
+              <li>No retaliatory dismissal for illness</li>
+              <li>NSSF contributions: 10% employer, 5% employee</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has-not">NOT Legally Required</h4>
+            <ul>
+              <li>Paying for the biopsy itself</li>
+              <li>Medical insurance (unless contracted)</li>
+              <li>Coverage for dependants</li>
+              <li>Contribution to NHIS (private sector often exempt)</li>
+              <li>Funding non-occupational diagnostics</li>
+            </ul>
+          </div>
+        </div>
+        <div class="duty-box" style="margin-top:16px;">
+          <h4 class="should">When Employer IS Liable for Procedure</h4>
+          <ul>
+            <li>Work-related illness / occupational exposure → Workers' Compensation Act</li>
+            <li>Medical cover explicitly in employment contract</li>
+            <li>Company policy / HR benefit scheme</li>
+            <li>Court-enforced duty of care (case-by-case)</li>
+          </ul>
+        </div>
+        <div class="layer-insight">
+          The employer absorbs <em>time-risk</em> (sick leave, job continuity) but NOT <em>health-risk</em> (procedure costs). The structural logic: employer = labour market actor, not insurer. But for an employee with Kin=0, the employer is the only institution with daily contact — and therefore bears the greatest moral weight.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="connector-label">PROPAGATES ↓</span></div>
+
+  <!-- LAYER 4: FEDERATED REGULATORS -->
+  <div class="layer" id="l4" style="--layer-color: #4c8ac9;" onclick="toggle('l4')">
+    <div class="layer-header">
+      <div class="layer-index">04</div>
+      <div class="layer-name" style="color:#4c8ac9;">[Federated] Regulators</div>
+      <div class="layer-verdict verdict-partial">FRAGMENTED</div>
+    </div>
+    <div class="layer-body">
+      <div class="layer-content">
+        <div class="duty-grid">
+          <div class="duty-box">
+            <h4 class="has">MGLSD / Labour Officers</h4>
+            <ul>
+              <li>Enforce sick leave entitlement</li>
+              <li>Investigate unlawful dismissal</li>
+              <li>Mediate employer-employee disputes</li>
+              <li>Oversee OSH Act 2025 workplace health monitoring</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has">NSSF Role</h4>
+            <ul>
+              <li>Retirement savings (accumulated)</li>
+              <li>Invalidity benefit: if permanently disabled</li>
+              <li>Mid-term access: limited eligibility conditions</li>
+              <li>NOT a medical insurance fund</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has">Ministry of Health / Uganda Cancer Institute</h4>
+            <ul>
+              <li>UCI provides subsidised/free diagnostics via referral</li>
+              <li>Core needle aspirate: public-sector priority procedure</li>
+              <li>Requires proper referral chain (often slow)</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has-not">Industry / Labour Union Gap</h4>
+            <ul>
+              <li>Uganda's union coverage: low in private sector</li>
+              <li>Industry CBAs rarely mandate medical cover</li>
+              <li>No sector-wide health fund for most industries</li>
+              <li>OSH 2025: targets occupational disease, not general diagnostics</li>
+            </ul>
+          </div>
+        </div>
+        <div class="layer-insight">
+          The regulator layer enforces employment rights but does not re-expand the financial scalar back into pooled health risk. It buffers job loss — not health cost. The coordination gap between Ministry of Labour and Ministry of Health is the institutional fracture line she falls through.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="connector-label">PROPAGATES ↓</span></div>
+
+  <!-- LAYER 5: CIVILIZATIONAL -->
+  <div class="layer" id="l5" style="--layer-color: #8a4cc9;" onclick="toggle('l5')">
+    <div class="layer-header">
+      <div class="layer-index">05</div>
+      <div class="layer-name" style="color:#8a4cc9;">[Civilizational] Planners</div>
+      <div class="layer-verdict verdict-intent">STRONG THEORY / WEAK PIPELINE</div>
+    </div>
+    <div class="layer-body">
+      <div class="layer-content">
+        <div class="duty-grid">
+          <div class="duty-box">
+            <h4 class="should">NPA — National Planning Authority</h4>
+            <ul>
+              <li>NDP III: reduce OOP spending from 38% toward UHC</li>
+              <li>NHIS framework: mandatory pooling (not yet enforced on private sector)</li>
+              <li>Social protection credits proposed for employer health contributions</li>
+              <li>Human Capital Index: tracks 29yo productivity as asset</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="should">WHO / UHC Framework</h4>
+            <ul>
+              <li>Essential Health Care Package: biopsy = public-sector priority</li>
+              <li>Financial risk protection: zero catastrophic expenditure goal</li>
+              <li>Demand: prepayment before point-of-care</li>
+              <li>Benchmark: &lt;10% households facing catastrophic health costs</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="should">Makerere / Academic Layer</h4>
+            <ul>
+              <li>Models kin-substitute insurance for urban orphans</li>
+              <li>Argues employer tax incentive for private health cover</li>
+              <li>Quantifies: "lost 29yo" = massive negative productivity gradient</li>
+              <li>Proposes community-based health insurance (CBHI) scale-up</li>
+            </ul>
+          </div>
+          <div class="duty-box">
+            <h4 class="has-not">Implementation Gap (2026)</h4>
+            <ul>
+              <li>NHIS: not yet mandatory for private employers</li>
+              <li>UHC intent does not yet reach diagnostic access in practice</li>
+              <li>Academic models not yet operationalised at district level</li>
+              <li>Civilizational intent = high-dim; rollout pipeline = low-bandwidth</li>
+            </ul>
+          </div>
+        </div>
+        <div class="layer-insight">
+          The civilizational layer has the correct architecture in theory: pool risk, replace kin-buffers with insurance, make employers contribute premiums. But as of 2026, this intent has not propagated through the implementation stack to reach her biopsy appointment.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OMEGA METER -->
+  <div class="omega-section">
+    <div class="omega-title">System Vulnerability Index — Ω(t)</div>
+    <div class="omega-sub">Ω = Medical Demand / (Liquidity + Kin + State). Ω ≥ 1 → Grounding Collapse</div>
+    <div class="omega-bars" id="omegaBars">
+      <div class="omega-bar-row">
+        <div class="omega-bar-label">Kin Buffer (K)</div>
+        <div class="omega-bar-track"><div class="omega-bar-fill" data-width="4" style="background:#c94c4c;"></div></div>
+        <div class="omega-bar-value" style="color:#c94c4c;">K ≈ 0</div>
+      </div>
+      <div class="omega-bar-row">
+        <div class="omega-bar-label">Employer Cover</div>
+        <div class="omega-bar-track"><div class="omega-bar-fill" data-width="22" style="background:#c9a84c;"></div></div>
+        <div class="omega-bar-value" style="color:#c9a84c;">Time only</div>
+      </div>
+      <div class="omega-bar-row">
+        <div class="omega-bar-label">State Subsidy (S)</div>
+        <div class="omega-bar-track"><div class="omega-bar-fill" data-width="28" style="background:#4c8ac9;"></div></div>
+        <div class="omega-bar-value" style="color:#4c8ac9;">UCI path</div>
+      </div>
+      <div class="omega-bar-row">
+        <div class="omega-bar-label">Medical Demand (M)</div>
+        <div class="omega-bar-track"><div class="omega-bar-fill" data-width="88" style="background:#c94c4c;"></div></div>
+        <div class="omega-bar-value" style="color:#c94c4c;">Biopsy cost</div>
+      </div>
+      <div class="omega-bar-row">
+        <div class="omega-bar-label">Ω — Vulnerability</div>
+        <div class="omega-bar-track"><div class="omega-bar-fill" data-width="92" style="background:linear-gradient(90deg,#c94c4c,#ff2222);"></div></div>
+        <div class="omega-bar-value" style="color:#ff4444;">Ω ≈ 1.6 ⚠</div>
+      </div>
+      <div class="omega-bar-row">
+        <div class="omega-bar-label">With NHIS (target)</div>
+        <div class="omega-bar-track"><div class="omega-bar-fill" data-width="30" style="background:#4cc98a;"></div></div>
+        <div class="omega-bar-value" style="color:#4cc98a;">Ω &lt; 0.4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THEOREM -->
+  <div class="theorem">
+    <div class="theorem-label">Uganda Health–Work Theorem (2026)</div>
+    <blockquote>
+      Uganda's system is <strong>legally strong at labour protection</strong> and <strong>structurally weak at health-risk pooling</strong>. When the Kin-layer collapses to zero — as it does for an orphaned urban employee — every biological event becomes a <strong>direct wage shock</strong>. The employer is the last standing institution, yet law places no obligation on them to absorb the medical cost itself. She is legally protected in her job; she is financially exposed in her body.
+    </blockquote>
+    <div class="formula-box">
+      Kin ≈ 0 + Insurance ≈ partial + Employer ≠ health absorber + State pooling ≈ incomplete
+      <br>
+      ──────────────────────────────────────────────────────────
+      <br>
+      ∴ Health Event → Immediate Financial Scalarization (Out-of-Pocket Crisis)
+    </div>
+  </div>
+
+  <!-- PRACTICAL STEPS -->
+  <div class="practical">
+    <div class="practical-title" style="margin-top:40px; font-family:'Playfair Display',serif;">What She Can Actually Do — Right Now</div>
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h4>Invoke Sick Leave Rights</h4>
+        <p>Demand 100% salary for first month. Employer must pay — this is non-negotiable under Employment Act 2006.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h4>Request UCI Public Referral</h4>
+        <p>Uganda Cancer Institute provides subsidised core needle aspirates via public referral. District hospital referral letter required.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h4>Ask Employer Directly</h4>
+        <p>No legal obligation — but many employers will assist as goodwill. Frame as retention: replacing her costs more than her biopsy.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <h4>Check Employment Contract</h4>
+        <p>Medical benefit may exist contractually even if she doesn't know. HR must disclose all contractual benefits on request.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">05</div>
+        <h4>Contact MGLSD Labour Officer</h4>
+        <p>If employer obstructs sick leave or threatens job — a Labour Officer can intervene. Free service, district-based.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">06</div>
+        <h4>NGO / Hospital Social Work</h4>
+        <p>Mulago and UCI both have social work departments for financial hardship cases. MUJHU, TASO, and others provide cancer diagnostic support.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function toggle(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('active');
+  }
+
+  // Animate omega bars on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.omega-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }, 400);
+  });
+</script>
+</body>
+</html>
